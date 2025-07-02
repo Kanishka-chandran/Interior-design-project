@@ -1,30 +1,65 @@
 <template>
   <div class="login-container">
     <div class="login-box">
-      <h2>Login</h2>
+      <h2>LOGIN</h2>
       <form @submit.prevent="handleLogin">
         <div class="input-group">
-          <label>Username</label>
-          <input v-model="username" required placeholder="Enter your username"/>
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            v-model="username"
+            required
+            placeholder="Enter your username"
+          />
         </div>
         <div class="input-group">
-          <label>Password</label>
-          <input type="password" v-model="password" required placeholder="Enter your password"/>
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            v-model="password"
+            required
+            placeholder="Enter your password"
+          />
+          <div class="forgot-password">
+            <a href="/forgot-password"><i class="fas fa-unlock-alt"></i> Forgot Password?</a>
+          </div>
         </div>
+
         <button type="submit" class="login-button">Login</button>
+
+        <div class="divider">or</div>
+
+        <button type="button" class="social-button google" @click="loginWithGoogle">
+          <i class="fab fa-google"></i> Continue with Google
+        </button>
+        <button type="button" class="social-button email" @click="loginWithEmail">
+          <i class="fas fa-envelope"></i> Continue with Email
+        </button>
+
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
     </div>
-    <div class="login-decoration"><div class="shape shape-1"></div><div class="shape shape-2"></div><div class="shape shape-3"></div></div>
+    <div class="login-decoration">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
   </div>
 </template>
 
 <script>
 import { gsap } from 'gsap'
+
 export default {
   name: 'LogiN',
   data() {
-    return { username:'', password:'', errorMessage:'' }
+    return {
+      username: '',
+      password: '',
+      errorMessage: ''
+    }
   },
   methods: {
     handleLogin() {
@@ -36,17 +71,24 @@ export default {
         this.errorMessage = 'Password must be at least 6 characters'
         return
       }
+
       this.errorMessage = ''
       this.$emit('login', this.username)
       this.$router.push('/')
     },
+    loginWithGoogle() {
+      alert('Google login clicked!')
+    },
+    loginWithEmail() {
+      alert('Email login clicked!')
+    },
     animateLogin() {
-      gsap.from('.login-box',{ y:50,opacity:0,duration:0.8,delay:0.3 })
-      gsap.from('.input-group',{ y:30,opacity:0,duration:0.6,stagger:0.2,delay:0.8 })
-      gsap.from('.login-button',{ y:20,opacity:0,duration:0.5,delay:1.4 })
-      gsap.to('.shape-1',{ x:20,y:20,duration:3,repeat:-1,yoyo:true,ease:'sine.inOut' })
-      gsap.to('.shape-2',{ x:-15,y:-15,duration:4,repeat:-1,yoyo:true,ease:'sine.inOut' })
-      gsap.to('.shape-3',{ x:10,y:-10,duration:5,repeat:-1,yoyo:true,ease:'sine.inOut' })
+      gsap.from('.login-box', { y: 50, opacity: 0, duration: 0.8, delay: 0.3 })
+      gsap.from('.input-group', { y: 30, opacity: 0, duration: 0.6, stagger: 0.2, delay: 0.8 })
+      gsap.from('.login-button', { y: 20, opacity: 0, duration: 0.5, delay: 1.4 })
+      gsap.to('.shape-1', { x: 20, y: 20, duration: 3, repeat: -1, yoyo: true, ease: 'sine.inOut' })
+      gsap.to('.shape-2', { x: -15, y: -15, duration: 4, repeat: -1, yoyo: true, ease: 'sine.inOut' })
+      gsap.to('.shape-3', { x: 10, y: -10, duration: 5, repeat: -1, yoyo: true, ease: 'sine.inOut' })
     }
   },
   mounted() {
@@ -55,8 +97,8 @@ export default {
 }
 </script>
 
-
 <style scoped>
+/* Same styles as before with new additions */
 .login-container {
   display: flex;
   justify-content: center;
@@ -97,7 +139,6 @@ label {
 }
 
 input {
-
   width: 100%;
   padding: 12px 15px;
   border: 1px solid #ddd;
@@ -110,6 +151,22 @@ input:focus {
   border-color: #42b983;
   box-shadow: 0 0 0 3px rgba(66, 185, 131, 0.2);
   outline: none;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: 8px;
+}
+
+.forgot-password a {
+  font-size: 0.85rem;
+  color: #42b983;
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+  color: #3aa876;
 }
 
 .login-button {
@@ -141,28 +198,72 @@ input:focus {
   font-size: 0.9rem;
 }
 
-.additional-options {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
+.divider {
+  text-align: center;
+  margin: 20px 0 10px;
+  color: #aaa;
   font-size: 0.9rem;
+  position: relative;
 }
 
-.additional-options a {
-  color: #42b983;
-  text-decoration: none;
-  transition: color 0.3s ease;
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: #ccc;
 }
 
-.additional-options a:hover {
-  color: #3aa876;
-  text-decoration: underline;
+.divider::before {
+  left: 0;
 }
 
-.additional-options span {
-  color: #ccc;
+.divider::after {
+  right: 0;
+}
+
+.social-button {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  background: white;
+  color: #333;
+}
+
+.social-button i {
+  font-size: 1.2rem;
+}
+
+.social-button.google {
+  color: #db4437;
+  border-color: #db4437;
+}
+
+.social-button.google:hover {
+  background: #db4437;
+  color: white;
+}
+
+.social-button.email {
+  color: #4285f4;
+  border-color: #4285f4;
+}
+
+.social-button.email:hover {
+  background: #4285f4;
+  color: white;
 }
 
 .login-decoration {
