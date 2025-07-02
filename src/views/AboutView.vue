@@ -96,15 +96,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import * as THREE from 'three'
 import AnimatedNum from '@/components/AnimatedNum.vue'
 
 const threeContainer = ref(null)
+let resizeObserver = null
 
 // Typing Text Setup
-const whoWeAreText = 'We are passionate interior designers sharing creative inspiration, DIY tips, and expert advice to help you transform your living spaces.'
-const missionText = 'Our mission is to make beautiful, functional design accessible to everyone. Whether you\'re redecorating a room or building a new home, our blog is here to guide you.'
+const whoWeAreText =
+  'We are passionate interior designers sharing creative inspiration, DIY tips, and expert advice to help you transform your living spaces.'
+const missionText =
+  "Our mission is to make beautiful, functional design accessible to everyone. Whether you're redecorating a room or building a new home, our blog is here to guide you."
 
 const whoWeAreRef = ref(null)
 const missionRef = ref(null)
@@ -128,6 +131,13 @@ onMounted(() => {
   if (whoWeAreRef.value) typeText(whoWeAreRef.value, whoWeAreText, 0, 150)
   if (missionRef.value) typeText(missionRef.value, missionText, 3500, 150)
   initThree()
+})
+
+onBeforeUnmount(() => {
+  if (resizeObserver && threeContainer.value) {
+    resizeObserver.unobserve(threeContainer.value)
+    resizeObserver.disconnect()
+  }
 })
 
 // 3D Background Setup
@@ -172,7 +182,9 @@ const initThree = () => {
   imageURLs.forEach((url, i) => {
     loader.load(url, (texture) => {
       const geometry = new THREE.BoxGeometry(3, 3, 3)
-      const materialArray = Array(6).fill().map(() => new THREE.MeshBasicMaterial({ map: texture }))
+      const materialArray = Array(6)
+        .fill()
+        .map(() => new THREE.MeshBasicMaterial({ map: texture }))
       const cube = new THREE.Mesh(geometry, materialArray)
 
       const cols = 4
@@ -201,7 +213,8 @@ const initThree = () => {
 
   animate()
 
-  const resizeObserver = new ResizeObserver(() => {
+  resizeObserver = new ResizeObserver(() => {
+    if (!threeContainer.value) return
     const width = threeContainer.value.clientWidth
     const height = threeContainer.value.clientHeight
     camera.aspect = width / height
@@ -212,6 +225,8 @@ const initThree = () => {
   resizeObserver.observe(threeContainer.value)
 }
 </script>
+
+
 
 <style scoped>
 .about-view {
